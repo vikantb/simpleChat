@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index</title>
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <style>
+        .main{
+            margin-top: 40px;
+            background-color: rgb(235, 234, 233);
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+   <div class="container main">
+        <h1>Simple Chat on server</h1>
+        
+        <input type="text" id="name" name="name" placeholder="name" class="form-control" style="margin: 20px 0 20px 0;">
+        <textarea name="message" id="message" rows="5" class="form-control" style="margin: 20px 0 20px 0;" placeholder="type Your message here"></textarea>
+        
+        <div class="row">
+            <div class="col">
+               <button class="btn btn-success" style="width: 80%;">Send</button>
+            </div>
+            <div class="col">
+                <p id="tp1" class="float-right" style="color: rgb(110, 6, 26); font-size: 20px;"></p>
+            </div>
+        </div>
+        
+        <div id="messages" style="height:250px; overflow: auto; padding: 30px;">
+            <h2 style="color: crimson;">chat History</h2>
+         </div>
+   </div>
+  
+
+    <script src="./js/jquery.js"></script>
+    <script src="/js/bootstrap.js"></script>
+
+   <script>
+       $(document).ready(()=>{
+           
+           $("button").click(()=>{
+               var t=new Date();
+                var m=t.toLocaleTimeString();
+                
+              sendMessage({
+                name:$("#name").val(),
+                message:$("#message").val(),
+                time: m
+              });
+              getMessage();
+           });
+
+          function sendMessage(message){
+              $.post("http://localhost:4545/messages",message);
+          }
+
+          function getMessage(){
+              $.get("http://localhost:4545/messages",(data)=>{
+                      data.forEach((value)=>{
+                        $("#messages").append(`
+                             <h3 > ${value.message} <small style="font-size:15px; padding-left:100px; color:red;">${value.time}</small></h3>
+                             <p style="font-style:italic;">---->  ${value.message} </p>`);
+   
+                      });
+                  })
+              }
+          
+
+
+       setInterval(()=>{
+           var t=new Date();
+           $("#tp1").text(t.toLocaleTimeString());
+       },1000)
+
+       });
+   </script>
+
+</body>
+</html>
